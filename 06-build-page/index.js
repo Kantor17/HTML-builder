@@ -29,17 +29,18 @@ async function replaceTemplates(
   fs.writeFile(destination, finishedTemplate);
 }
 
-async function mergeStyles(
-  sourcePath = path.join(__dirname, 'styles'),
-  destination = path.join(__dirname, 'project-dist', 'bundle.css')
-) {
-  const dirents = await fs.readdir(sourcePath, {withFileTypes: true});
-  dirents.forEach(async dirent => {
-    if (dirent.isFile() && path.parse(dirent.name).ext === '.css') {
-      const file = await fs.readFile(path.join(sourcePath, dirent.name));
-      fs.appendFile(destination, file.toString());
-    }
+async function mergeStyles(sourcePath, destination) {
+  const dirents = await fs.readdir(sourcePath, {
+    withFileTypes: true
   });
+  let styles = '';
+  for (const dirent of dirents) {
+    if (dirent.isFile() && path.parse(dirent.name).ext === '.css') {
+      const file = await fs.readFile(path.join(__dirname, 'styles', dirent.name));
+      styles += file;
+    }
+  }
+  fs.writeFile(destination, styles);
 }
 
 async function copyDir(sourcePath, destination) {
