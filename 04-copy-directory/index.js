@@ -1,11 +1,20 @@
 const fs = require('fs/promises');
 const path = require('path');
 
-async function copyDir() {
-  fs.mkdir(path.join(__dirname, 'files-copy'), {recursive: true});
-  const files = await fs.readdir(path.join(__dirname, 'files'));
-  files.forEach(async file => {
-    await fs.copyFile(path.join(__dirname, 'files', file), path.join(__dirname, 'files-copy', file));
+async function copyDir(sourcePath, destination) {
+  fs.mkdir(destination, {
+    recursive: true
+  });
+  const dirents = await fs.readdir(sourcePath, {
+    withFileTypes: true
+  });
+  dirents.forEach(async dirent => {
+    if (dirent.isFile()) {
+      await fs.copyFile(path.join(sourcePath, dirent.name), path.join(destination, dirent.name));
+    } else {
+      copyDir(path.join(sourcePath, dirent.name), path.join(destination, dirent.name));
+    }
   });
 }
-copyDir();
+
+copyDir(path.join(__dirname, 'files'), path.join(__dirname, 'files-copy'));
