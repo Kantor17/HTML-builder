@@ -5,7 +5,7 @@ async function readFiles(dirPath) {
   files.forEach(async dirent => {
     if(dirent.isFile()) {
       const stat = await fs.stat(path.join(dirPath, dirent.name));
-      console.log(`${path.parse(dirent.name).name} - ${path.parse(dirent.name).ext} - ${stat.size}`);
+      console.log(`${path.parse(dirent.name).name} - ${path.parse(dirent.name).ext} - ${stat.size}bytes`);
     }
   });
 }
